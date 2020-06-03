@@ -48,6 +48,7 @@ public class SellerDaoJDBC implements SellerDao {
 		 * DepName dando apelido pra função de cima
 		 * INNER JOIN buscar o dados da duas tabelas (seller,Departmen)
 		 * WHERE onde
+		 * Assim vai procura e retornar todos os dados do vendador pelo Id
 		 */
 		try {
 			st = conn.prepareStatement(
@@ -61,18 +62,8 @@ public class SellerDaoJDBC implements SellerDao {
 			//testando se rs eh diferente de zero 
 			if(rs.next()) {
 				//instanciando um departamento 
-				Department dep = new Department();
-				//pegando o resultado da coluna DepartmenId que esta no banco
-				dep.setId(rs.getInt("DepartmentId"));
-				dep.setName(rs.getString("DepName"));
-				
-				Seller obj = new Seller();
-				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("Name"));
-				obj.setEmail(rs.getString("Email"));
-				obj.setBaseSalary(rs.getDouble("BaseSalary"));
-				obj.setBirthDate(rs.getDate("BirthDate"));
-				obj.setDepartment(dep);
+				Department dep = instantiateDepartment(rs);
+				Seller obj = instantiateSeller(rs, dep);
 				return obj;
 			}
 			return null;
@@ -87,6 +78,25 @@ public class SellerDaoJDBC implements SellerDao {
 		}
 		
 		
+	}
+
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller obj = new Seller();
+		obj.setId(rs.getInt("Id"));
+		obj.setName(rs.getString("Name"));
+		obj.setEmail(rs.getString("Email"));
+		obj.setBaseSalary(rs.getDouble("BaseSalary"));
+		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setDepartment(dep);
+		return obj;
+	}
+
+	private Department instantiateDepartment(ResultSet rs) throws SQLException {
+		 Department dep = new Department();
+			//pegando o resultado da coluna DepartmenId que esta no banco
+			dep.setId(rs.getInt("DepartmentId"));
+			dep.setName(rs.getString("DepName"));
+			return dep;
 	}
 
 	@Override
